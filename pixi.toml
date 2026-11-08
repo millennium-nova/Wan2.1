@@ -1,0 +1,37 @@
+[workspace]
+name = "wan-experiments"
+version = "2.1.0"
+description = "Wan2.1 の実験用環境（Linux x86_64 / NVIDIA CUDA）"
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+requires-pixi = ">=0.66.0"
+
+[dependencies]
+python = "3.11.*"
+ffmpeg = ">=7,<8"
+# opencv-python の import に必要な共有ライブラリ。
+libgl = "*"
+libglib = "*"
+
+[pypi-dependencies]
+# 依存関係は既存の pyproject.toml から取得し、ソースの変更を即座に反映する。
+wan = { path = ".", editable = true }
+# FlashAttention の Python / PyTorch / CUDA / C++ ABI をそろえる。
+torch = { version = "==2.8.0", index = "https://download.pytorch.org/whl/cu128" }
+torchvision = { version = "==0.23.0", index = "https://download.pytorch.org/whl/cu128" }
+flash-attn = { url = "https://github.com/Dao-AILab/flash-attention/releases/download/v2.8.3/flash_attn-2.8.3%2Bcu12torch2.8cxx11abiTRUE-cp311-cp311-linux_x86_64.whl" }
+# 上流コードが使用する API と NumPy 1.x に対応する範囲に制限する。
+transformers = ">=4.49,<4.52"
+diffusers = ">=0.31,<0.36"
+gradio = ">=5,<6"
+opencv-python = ">=4.9.0.80,<4.12"
+huggingface-hub = { version = ">=0.34,<1", extras = ["cli"] }
+# VACE の動画入力で使用するが、上流の依存関係には記載されていない。
+decord = "==0.6.0"
+
+[tasks]
+check = "python scripts/check_environment.py"
+check-cpu = "python scripts/check_environment.py --cpu"
+generate = "python scripts/run_on_idle_gpu.py -- python generate.py"
+gpu-run = "python scripts/run_on_idle_gpu.py"
+download = "hf download"

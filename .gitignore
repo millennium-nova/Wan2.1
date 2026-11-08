@@ -23,6 +23,7 @@
 *.whl
 cache
 __pycache__/
+*.egg-info/
 storage/
 samples/
 !.gitignore
